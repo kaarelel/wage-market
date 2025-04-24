@@ -1,0 +1,10 @@
+# Usage: docker compose up --build
+
+version: '3.9'
+services:
+ wage-market-app:
+   build: .
+   container_name: wage-market-app
+   ports:
+     - "8085:8085"
+   restart: unless-stopped
