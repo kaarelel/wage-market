@@ -3,22 +3,21 @@ package com.wagemarket.service;
 import com.wagemarket.client.OpenAIClient;
 import com.wagemarket.client.StatisticsClient;
 import com.wagemarket.model.SalaryResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class SalaryService {
 
-    private final StatisticsClient statisticsClient;
-    private final OpenAIClient openAIClient;
+    @Autowired
+    private StatisticsClient statisticsClient;
 
-    public SalaryService(StatisticsClient statisticsClient, OpenAIClient openAIClient) {
-        this.statisticsClient = statisticsClient;
-        this.openAIClient = openAIClient;
-    }
+    @Autowired
+    private OpenAIClient openAIClient;
 
-    public SalaryResponse analyzeSalaryTrend(String title) {
-        String salaryData = statisticsClient.fetchData(title);
-        String summary = openAIClient.generateSummary(title, salaryData);
+    public SalaryResponse analyzeSalaryTrend(String title, String field) {
+        String salaryData = statisticsClient.fetchData();
+        String summary = openAIClient.generateSummary(title + " in " + field, salaryData);
 
         SalaryResponse response = new SalaryResponse();
         response.setSummary(summary);

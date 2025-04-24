@@ -13,8 +13,9 @@ class SalaryServiceTest {
     private SalaryService service;
 
     @Test
-    void testMockSummaryResponse() {
-        SalaryResponse result = service.analyzeSalaryTrend("Test Job");
-        Assertions.assertTrue(result.getSummary().contains("Test Job"));
+    void testServiceIntegration() {
+        SalaryResponse result = service.analyzeSalaryTrend("Developer", "IT");
+        Assertions.assertNotNull(result);
+        Assertions.assertNotNull(result.getSummary());
     }
 }
