@@ -1,0 +1,14 @@
+# Java
+/backend/target/
+/backend/.idea/
+/backend/.mvn/
+
+# Node.js
+/frontend/node_modules/
+/frontend/dist/
+/frontend/.idea/
+
+# General
+*.log
+*.env
+.DS_Store
