@@ -1,6 +1,5 @@
 package com.wagemarket.service;
 
-import com.wagemarket.client.OpenAIClient;
 import com.wagemarket.client.StatisticsClient;
 import com.wagemarket.model.SalaryResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,14 +12,14 @@ public class SalaryService {
     private StatisticsClient statisticsClient;
 
     @Autowired
-    private OpenAIClient openAIClient;
+    private FieldService fieldService;
 
     public SalaryResponse analyzeSalaryTrend(String title, String field) {
-        String salaryData = statisticsClient.fetchData();
-        String summary = openAIClient.generateSummary(title + " in " + field, salaryData);
+        String fieldCode = fieldService.resolveFieldCode(field);
+        String salaryData = statisticsClient.getAverageSalaryOverYears(fieldCode);
 
         SalaryResponse response = new SalaryResponse();
-        response.setSummary(summary);
+        response.setSummary(salaryData);
         return response;
     }
 }

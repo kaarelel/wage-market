@@ -3,43 +3,56 @@ package com.wagemarket.client;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class StatisticsClient {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    public String fetchData() {
+    public String getAverageSalaryOverYears(String fieldCode) {
         try {
-            String url = "https://andmed.stat.ee/api/v1/et/stat/PA631/export?format=json";
+            Map<String, Object> requestBody = buildRequest(fieldCode);
 
             HttpHeaders headers = new HttpHeaders();
-            headers.setAccept(List.of(MediaType.APPLICATION_JSON));
-            HttpEntity<String> entity = new HttpEntity<>(headers);
+            headers.setContentType(MediaType.APPLICATION_JSON);
 
-            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
-            String json = response.getBody();
+            HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, headers);
 
-            // Extract salary trend per year from JSON string (simple parsing, no DTO)
-            List<String> lines = List.of(json.split("\\n"));
-            StringBuilder sb = new StringBuilder();
-            for (String line : lines) {
-                if (line.contains("Keskmine brutokuupalk")) {
-                    String[] parts = line.split(",");
-                    if (parts.length >= 2) {
-                        String year = parts[1].replaceAll("[^\\d]", "");
-                        String salary = parts[parts.length - 1].replaceAll("\\\"", "").trim();
-                        sb.append(year).append(": ").append(salary).append("€\n");
-                    }
-                }
-            }
-            return sb.toString();
+            ResponseEntity<String> response = restTemplate.postForEntity(
+                    "https://andmed.stat.ee/api/v1/et/stat/PA103", request, String.class
+            );
+
+            // parse response here...
 
         } catch (Exception e) {
-            System.err.println("Failed to fetch salary data: " + e.getMessage());
-            return "";
+            System.err.println("❌ Failed to fetch salary data: " + e.getMessage());
+            return "Error fetching salary data.";
         }
+    }
+
+    // 👇 Add your method here
+    private Map<String, Object> buildRequest(String fieldCode) {
+        List<Map<String, Object>> query = new ArrayList<>();
+
+        query.add(Map.of(
+                "code", "Näitaja",
+                "selection", Map.of("filter", "item", "values", List.of("GR_W_AVG"))
+        ));
+
+        if (fieldCode != null && !fieldCode.isBlank()) {
+            query.add(Map.of(
+                    "code", "Tegevusala",
+                    "selection", Map.of("filter", "item", "values", List.of(fieldCode))
+            ));
+        }
+
+        query.add(Map.of(
+                "code", "Vaatlusperiood",
+                "selection", Map.of("filter", "item", "values", List.of("2019", "2020", "2021", "2022", "2023"))
+        ));
+
+        return Map.of("query", query, "response", Map.of("format", "json-stat2"));
     }
 }

@@ -12,8 +12,8 @@ class StatisticsClientTest {
     private StatisticsClient statisticsClient;
 
     @Test
-    void testFetchData() {
-        String result = statisticsClient.fetchData();
+    void testGetAverageSalaryOverYears() {
+        String result = statisticsClient.getAverageSalaryOverYears("IT001");
         Assertions.assertTrue(result != null && !result.isBlank());
     }
 }
