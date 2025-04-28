@@ -42,7 +42,7 @@ const emitSearch = () => {
 onMounted(async () => {
   try {
     const response = await axios.get('/api/field-codes')
-    fields.value = Object.entries(response.data).map(([label, code]) => ({ label, code }))
+    fields.value = response.data.map(job => ({ label: job, code: job }))
   } catch (e) {
     error.value = 'Failed to load fields.'
   }

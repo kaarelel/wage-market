@@ -1,6 +1,7 @@
 package com.wagemarket.controller;
 
 import com.wagemarket.model.SalaryResponse;
+
 import com.wagemarket.service.SalaryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
